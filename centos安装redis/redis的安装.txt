@@ -1,0 +1,191 @@
+
+一 安装redis
+参考：				http://redis.io/download
+redis官方下载目录：	http://download.redis.io/releases/
+
+# cd /home/data/software/
+# wget http://download.redis.io/releases/redis-stable.tar.gz
+# tar -zxvf redis-stable.tar.gz 
+# cd redis-stable
+# make
+...
+Hint: It's a good idea to run 'make test' ;)
+
+make[1]: Leaving directory `/home/data/software/redis-stable/src'
+出现错误提示：
+[root@centos-03 redis-stable]# make test
+cd src && make test
+make[1]: Entering directory `/home/data/software/redis-stable/src'
+You need tcl 8.5 or newer in order to run the Redis test
+make[1]: *** [test] Error 1
+make[1]: Leaving directory `/home/data/software/redis-stable/src'
+make: *** [test] Error 2
+
+出现上面的错误则需要安装tcl
+# yum -y install tcl 再次make test
+# make test
+
+# cd src
+# make install  # 这样就把当前可执行文件复制到/usr/local/bin目录下
+
+二 启用redis
+[root@vm_web1 src]# redis-server    # 默认启动 可以使用 --port 端口号 来指定端口
+
+三 配置redis
+cd /home/data/software/redis-stable/utils
+1 [root@vm_web1 utils]# cp ./redis_init_script /etc/init.d/redis_6379  # 我的redis以后使用默认的6379端口所以这里命名也为redis_6379
+[root@vm_web1 ~]# vi /etc/init.d/redis_6379   # 主要注意一下几项对应上
+REDISPORT=6379   
+PIDFILE=/var/run/redis_${REDISPORT}.pid
+CONF="/etc/redis/${REDISPORT}.conf"
+
+2 创建文件夹用来存放redis的配置文件和持久化文件
+[root@vm_web1 ~]# mkdir -p /etc/redis /var/redis/6379
+[root@vm_web1 ~]# cp /data/software/redis-stable/redis.conf /etc/redis/6379.conf
+[root@vm_web1 ~]# vi /etc/redis/6379.conf  # 修改如下几项
+pidfile /var/run/redis_6379.pid
+port 6379
+daemonize yes  			# 使Redis以守护进程模式运行
+dir /var/redis/6379  	# 设置持久化文件存放的位置
+
+
+[root@vm_web1 ~]# service redis_6379 start  # 再次以守护进程模式启动redis
+[root@vm_web1 ~]# vi /etc/rc.d/rc.local  # 添加开机启动
+/etc/init.d/redis_6379 start
+
+
+[root@centos-03 6379]# ps -ef | grep redis
+root     25370     1  0 17:01 pts/0    00:00:04 src/redis-server 127.0.0.1:21347                
+root     25382     1  0 17:02 pts/0    00:00:03 src/redis-server 127.0.0.1:21348                
+root     25643     1  0 17:36 ?        00:00:00 /usr/local/bin/redis-server 127.0.0.1:6379      
+root     25648 24769  0 17:41 pts/1    00:00:00 grep redis
+
+四、停止redis
+# redis-cli SHUTDOWN
+
+五、测试：
+# redis-cli
+127.0.0.1:6379> set arg helloworld
+OK
+127.0.0.1:6379> get arg
+"helloworld"
+127.0.0.1:6379> exit
+
+127.0.0.1:6379> info   	#查看redis信息
+# Server
+redis_version:3.2.5
+redis_git_sha1:00000000
+redis_git_dirty:0
+redis_build_id:3f5ed59f69dc0167
+redis_mode:standalone
+os:Linux 2.6.32-573.26.1.el6.x86_64 x86_64
+arch_bits:64
+multiplexing_api:epoll
+gcc_version:4.4.7
+process_id:25680
+run_id:a57d7ca236d98f8bde81f7ebf668e37205ec0d41
+tcp_port:6379
+uptime_in_seconds:538
+uptime_in_days:0
+hz:10
+lru_clock:3068571
+executable:/usr/local/bin/redis-server
+config_file:/etc/redis/6379.conf
+
+# Clients
+connected_clients:1
+client_longest_output_list:0
+client_biggest_input_buf:0
+blocked_clients:0
+
+# Memory
+used_memory:822440
+used_memory_human:803.16K
+used_memory_rss:7778304
+used_memory_rss_human:7.42M
+used_memory_peak:822440
+used_memory_peak_human:803.16K
+total_system_memory:808755200
+total_system_memory_human:771.29M
+used_memory_lua:37888
+used_memory_lua_human:37.00K
+maxmemory:0
+maxmemory_human:0B
+maxmemory_policy:noeviction
+mem_fragmentation_ratio:9.46
+mem_allocator:jemalloc-4.0.3
+
+# Persistence
+loading:0
+rdb_changes_since_last_save:8
+rdb_bgsave_in_progress:0
+rdb_last_save_time:1479463041
+rdb_last_bgsave_status:ok
+rdb_last_bgsave_time_sec:-1
+rdb_current_bgsave_time_sec:-1
+aof_enabled:0
+aof_rewrite_in_progress:0
+aof_rewrite_scheduled:0
+aof_last_rewrite_time_sec:-1
+aof_current_rewrite_time_sec:-1
+aof_last_bgrewrite_status:ok
+aof_last_write_status:ok
+
+# Stats
+total_connections_received:4
+total_commands_processed:18
+instantaneous_ops_per_sec:0
+total_net_input_bytes:582
+total_net_output_bytes:23593013
+instantaneous_input_kbps:0.00
+instantaneous_output_kbps:0.00
+rejected_connections:0
+sync_full:0
+sync_partial_ok:0
+sync_partial_err:0
+expired_keys:0
+evicted_keys:0
+keyspace_hits:4
+keyspace_misses:0
+pubsub_channels:0
+pubsub_patterns:0
+latest_fork_usec:0
+migrate_cached_sockets:0
+
+# Replication
+role:master
+connected_slaves:0
+master_repl_offset:0
+repl_backlog_active:0
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:0
+repl_backlog_histlen:0
+
+# CPU
+used_cpu_sys:0.24
+used_cpu_user:0.23
+used_cpu_sys_children:0.00
+used_cpu_user_children:0.00
+
+# Cluster
+cluster_enabled:0
+
+# Keyspace
+db0:keys=1,expires=0,avg_ttl=0
+
+redis 127.0.0.1:6379> monitor 实时转储收到的请求。
+OK
+1340780669.110663 "monitor"
+ 
+redis 127.0.0.1:6379> config get dir 获取服务器配置信息
+
+ 
+flushdb 删除当前选择数据库中的所有key
+flushall  删除所有数据库中的所有key
+
+
+
+
+
+
+
