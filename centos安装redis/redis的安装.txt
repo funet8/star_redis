@@ -1,4 +1,3 @@
-
 一 安装redis
 参考：				http://redis.io/download
 redis官方下载目录：	http://download.redis.io/releases/
@@ -180,8 +179,8 @@ OK
 redis 127.0.0.1:6379> config get dir 获取服务器配置信息
 
  
-flushdb 删除当前选择数据库中的所有key
-flushall  删除所有数据库中的所有key
+flushdb		删除当前选择数据库中的所有key
+flushall	删除所有数据库中的所有key
 
 
 
