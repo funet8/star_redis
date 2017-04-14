@@ -46,6 +46,10 @@ logfile "/usr/redis/log/redis.log"	#日志保存路径
 四、防火墙设置
 # iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 6379 -j ACCEPT #允许6379端口
 # service iptables save  #保存iptables规则
+坑：
+192.168.1.3可以远程链接192.168.1.4的redis
+192.168.1.4不能远程链接192.168.1.3的redis
+起初以为是192.168.1.3的网络问题，但是在192.168.1.3执行防火墙设置之后，4可以连3，防火墙要允许，即使关掉也不行。。。
 
 
 
