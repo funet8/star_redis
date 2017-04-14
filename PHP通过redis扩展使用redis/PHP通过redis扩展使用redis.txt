@@ -1,0 +1,52 @@
+#####PHP通过redis扩展使用redis
+http://blog.csdn.net/love__coder/article/details/8691679
+
+[root@centos-04 ~]# cd /data/software/
+[root@centos-04 software]# git clone https://github.com/nicolasff/phpredis.git phpredis
+[root@centos-04 software]# cd phpredis/
+[root@centos-04 phpredis]# which phpize
+报错：
+/usr/bin/which: no phpize in (/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin)    
+yum install -y php-devel 然后就会安装上phpize
+
+[root@centos-04 phpredis]# phpize
+[root@centos-04 phpredis]# ./configure
+[root@centos-04 phpredis]# make && make install
+[root@centos-04 phpredis]# make test
++-----------------------------------------------------------+
+|                       ! ERROR !                           |
+| The test-suite requires that proc_open() is available.    |
+| Please check if you disabled it in php.ini.               |
++-----------------------------------------------------------+
+
+如果顺利，将得到类似如下提示：
+Installing shared extensions:     /usr/lib64/php/modules/
+Installing shared extensions:     /usr/local/php/lib/php/extensions/no-debug-non-zts-20060613/ 
+
+加载redis.so
+在php.ini 文件中，添加配置：
+[redis]
+extension=redis.so
+重启web服务器，echo phpinfo() ，将看到大致如下显示：
+
+测试
+新建test.php
+<?php
+ini_set("display_errors", "On");
+
+$redis = new Redis();
+$conn = $redis->connect('192.168.1.4', 6379);
+$auth = $redis->auth('123456'); //设置密码
+//var_dump($auth);
+$redis->set('name1', "1111111");
+$redis->set('name2', "222222");
+
+var_dump($redis->get("name1"));
+var_dump($redis->get("name2"));
+
+访问url,再验证
+[root@centos-04 ~]# redis-cli -h 192.168.1.4 -p 6379 -a 123456
+192.168.1.4:6379> get name1
+"1111111"
+192.168.1.4:6379> get name2
+"222222"
