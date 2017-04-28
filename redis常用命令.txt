@@ -2,7 +2,7 @@
 #####停止
 redis-cli SHUTDOWN
 
-#####停止
+#####开始
 redis-cli
 redis-server # 默认启动 可以使用 --port 端口号 来指定端口
 
