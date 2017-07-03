@@ -29,6 +29,9 @@ redis-server # 默认启动 可以使用 --port 端口号 来指定端口
 
 配置远程链接：
 注释掉bind 127.0.0.1可以使所有的ip访问redis
+bind 0.0.0.0				//所有的ip访问redis
+bind 127.0.0.1 172.16.1.192   //绑定多个端口用空格
+
 "protected-mode yes"改为 "protected-mode no"
 
 来源：http://www.cnblogs.com/liusxg/p/5712493.html
@@ -45,6 +48,11 @@ logfile "/usr/redis/log/redis.log"	#日志保存路径
 
 四、防火墙设置
 # iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 6379 -j ACCEPT #允许6379端口
+//只允许127.0.0.1访问6379
+iptables -A INPUT -s 127.0.0.1 -p tcp --dport 6379 -j ACCEPT
+//其他ip访问全部拒绝
+iptables -A INPUT -p TCP --dport 6379 -j REJECT
+
 # service iptables save  #保存iptables规则
 坑：
 192.168.1.3可以远程链接192.168.1.4的redis
@@ -157,6 +165,13 @@ http://blog.csdn.net/zhutulang/article/details/51969760
 30. 指定包含其它的配置文件，可以在同一主机上多个Redis实例之间使用同一份配置文件，而同时各个实例又拥有自己的特定配置文件
     include /path/to/local.conf
 
+
+[root@redis-200 ~]# cat redis_flushall.sh
+
+#!/bin/sh
+/usr/local/bin/redis-cli  -p 63920 -a 123456 <<eof
+flushall
+EOF  ###shell中调用redis相关命令
 
 
 

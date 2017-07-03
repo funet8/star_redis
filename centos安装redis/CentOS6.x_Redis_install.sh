@@ -1,6 +1,6 @@
 #!/bin/bash
 # -------------------------------------------------------------------------------
-# Filename:    CentOS6.x_Redis_install
+# Filename:    CentOS_Redis_install.sh
 # Revision:    1.0
 # Date:        2017/04/13
 # Author:      star
@@ -13,6 +13,8 @@
 #或者wget http://download.redis.io/releases/redis-stable.tar.gz 最新版本
 # -------------------------------------------------------------------------------
 # Copyright:   2017 (c) star
+# git地址：https://github.com/funet8/star_redis/blob/master/centos安装redis/CentOS6.x_Redis_install.sh
+
 
 ###############定义变量
 redis_software="/home/data/software/"	#redis软件目录
@@ -29,7 +31,7 @@ then
 fi
 mkdir -p ${redis_software}
 cd ${redis_software}
-#wget http://download.redis.io/releases/redis-stable.tar.gz
+wget http://download.redis.io/releases/redis-stable.tar.gz
 tar -zxf redis-stable.tar.gz 
 cd redis-stable
 make
