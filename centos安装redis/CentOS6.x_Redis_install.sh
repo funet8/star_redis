@@ -24,7 +24,7 @@ redis_dir="/data/redis/${redis_port}"	#redis持久化目录
 redis_passwd="123456"
 
 ###############1.安装redis
-yum -y install tcl
+yum -y install tcl gcc gcc-c++ libstdc++-devel
 if [ ! -e ${redis_software} ] 
 then 
 	mkdir -p ${redis_software}
