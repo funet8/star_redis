@@ -102,6 +102,7 @@ logfile "/data/wwwroot/log/redis_${redis_port}.log"
 #设置数据库的数目
 databases 16
 #保存数据到磁盘。格式是：save <seconds> <changes> ，含义是在 seconds 秒之后至少有 changes个keys 发生改变则保存一次。
+#默认设置意思是：在60 秒之内有10000 个keys 发生变化时、在300 秒之内有10 个keys 发生了变化、在900 秒之内有1 个keys 发生了变化，则镜像备份。
 save 900 1
 save 300 10
 save 60 10000
@@ -118,7 +119,7 @@ dir ${redis_dir}
 #设置本机为slave服务。格式：slaveof <masterip> <masterport>。设置master服务的IP地址及端口，在Redis启动时，它会自动从master进行数据同步
 # slaveof  192.168.1.3  6379
 # slaveof <masterip> <masterport>
-#当master服务设置了密码保护时，slav服务连接master的密码。
+#当master服务设置了密码保护时，slave服务连接master的密码。
 #masterauth
 #当一个slave与master失去联系时，或者复制正在进行的时候，slave应对请求的行为：1) 如果为 yes（默认值） ，slave 仍然会应答客户端请求，但返回的数据可能是过时，或者数据可能是空的在第一次同步的时候；2) 如果为 no ，在你执行除了 info 和 salveof 之外的其他命令时，slave 都将返回一个 "SYNC with master in progress" 的错误。
 slave-serve-stale-data yes
@@ -173,6 +174,12 @@ client-output-buffer-limit slave 256mb 64mb 60
 client-output-buffer-limit pubsub 32mb 8mb 60
 hz 10
 aof-rewrite-incremental-fsync yes
+#最大内存设置，默认为0,表示"无限制",推荐为物理内存的3/4,此配置需要和"maxmemory-policy"配合使用,当redis中内存数据达到maxmemory时,触发"清除策略"
+maxmemory 512m
+#内存不足"时,数据清除策略,默认为"volatile-lru"。
+maxmemory-policy volatile-lru
+#限制同时连接的客户端数量，不易过大具体多少根据具体情况而定
+maxclients 30000
 EOFI
 # 输出无注释的配置文件内容，方便查看
 #awk '! /^(#|$)/' ${redis_conf}${redis_port}.conf
@@ -184,3 +191,22 @@ echo "/etc/init.d/redis_${redis_port} start" >> /etc/rc.d/rc.local
 iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${redis_port} -j ACCEPT
 /etc/init.d/iptables save 
 /etc/init.d/iptables restart
+
+
+######################################
+#新增端口: 63921
+#cp /data/conf/63920.conf /data/conf/63921.conf 
+#vi /data/conf/63921.conf 
+#修改以下： 
+#port 63921
+#pidfile /var/run/redis_63921.pid
+#logfile "/data/wwwroot/log/redis_63921.log"
+#dir /data/redis/63921
+#mkdir /data/redis/63921
+
+#cp -a /etc/init.d/redis_63920 /etc/init.d/redis_63921
+#vi /etc/init.d/redis_63921
+#修改端口： REDISPORT=63921
+#启动：
+#/etc/init.d/redis_63921 start
+
