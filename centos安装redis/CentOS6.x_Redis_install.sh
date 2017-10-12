@@ -209,4 +209,8 @@ iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport ${redis_port} -j 
 #ÐÞ¸Ä¶Ë¿Ú£º REDISPORT=63921
 #Æô¶¯£º
 #/etc/init.d/redis_63921 start
+#iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 63921 -j ACCEPT
+#/etc/init.d/iptables save 
+#/etc/init.d/iptables restart
+#echo "/etc/init.d/redis_63921 start" >> /etc/rc.local
 
