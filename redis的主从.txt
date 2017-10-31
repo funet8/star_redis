@@ -25,3 +25,5 @@ OK
 
 主从设置成功。
 http://blog.csdn.net/zfl092005/article/details/17523945
+
+test
