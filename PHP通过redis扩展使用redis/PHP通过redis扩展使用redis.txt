@@ -29,6 +29,11 @@ Installing shared extensions:     /usr/local/php/lib/php/extensions/no-debug-non
 extension=redis.so
 重启web服务器，echo phpinfo() ，将看到大致如下显示：
 
+# php -m|grep redis
+redis
+
+chmod 777 -R /var/lib/php/session
+
 测试
 新建test.php
 <?php

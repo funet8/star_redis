@@ -79,6 +79,25 @@ redis 127.0.0.1:6379> slowlog reset #清空慢查询日志信息
 
 redis 127.0.0.1:6379> config get * #使用 * 获取所有配置项
 redis 127.0.0.1:6379> config set loglevel 'notice' #更改配置
+redis 127.0.0.1:6379> KEYS * #获取所有数据
+redis 127.0.0.1:6379> DEL KEY_NAME #删除某个数据
+
+
+#########
+一、导出所有的keys
+　　echo "keys 201*" |./redis-cli -h localhost -p 6379 -a password >> 1.txt
+　　这样就将所有符合201*的数据key导出到1.txt中了
+二、导出key - value
+
+
+https://www.cnblogs.com/dadonggg/p/8662455.html
+redis导出数据
+redis-dump -u :password@202.102.221.11:6379 > 202.102.221.11.json
+
+redis导入数据
+cat 202.102.221.11.json | redis-load -u :password@202.102.221.12:6379
+
+
 
 #####Redis客户端管理软件
 http://database.51cto.com/art/201505/477692.htm
