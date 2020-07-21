@@ -7,13 +7,15 @@
 # Email:       liuxing007xing@163.com
 # Website:     www.funet8.com
 # Description: centos 7.x 安装redis
-# Notes:       需要切换到root运行,版本针对64位系统，操作系统为CentOS6.3  
+# Notes:       需要切换到root运行,版本针对64位系统，操作系统为CentOS7
+
 #将redis-stable.tar.gz上传到/home/data/software/目录中     
 #我下载的版本是redis_version_3.2.5   
 #或者wget http://download.redis.io/releases/redis-stable.tar.gz 最新版本
 # -------------------------------------------------------------------------------
 # Copyright:   2017 (c) star
-# git地址：https://github.com/funet8/star_redis/blob/master/centos安装redis/CentOS6.x_Redis_install.sh
+# wget https://gitee.com/funet8/star_redis/blob/master/centos/install_redis/CentOS7.x_Redis_install.sh
+# 
 
 
 ###############定义变量
